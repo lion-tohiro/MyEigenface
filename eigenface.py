@@ -70,6 +70,8 @@ def eigenfaces(src_path, a):
         eigenface_img[:,col*i:col*(i+1)] = eigenface_img_temp
     cv2.imshow("eigenfaces",eigenface_img)
     cv2.waitKey(0)
+    
+    return img_mean, eigenfaces_mat
 
 # the second parameter is always between 0.95-0.99
 eigenfaces("D:\\k\\Myeigen\\MyEigenface\\att_faces", 0.95)
