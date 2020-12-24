@@ -32,9 +32,10 @@ def eigenfaces(src_path):
     # cv2.imshow("ave", average)
     # cv2.waitKey(0)
 
-    #compute the delta
+    #compute the difference matrix
     for i in range(0, total_face):
         img_list[:, i] -= img_mean[:]
+    
     
 
 eigenfaces("D:\\k\\Myeigen\\MyEigenface\\att_faces")
