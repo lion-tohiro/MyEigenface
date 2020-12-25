@@ -2,15 +2,15 @@ from cv2 import cv2
 import numpy as np
 import sys
 import os
-import matplotlib.pyplot as plt
 
+# some parameters of training and testing data
 train_sub_count = 40
 train_img_count = 5
 total_face = 200
 row = 112
 col = 92
 
-def eigenfaces(src_path, a):
+def eigenfaces_train(src_path, a):
     img_list = np.empty((row*col, total_face))
     count = 0
 
@@ -20,9 +20,8 @@ def eigenfaces(src_path, a):
             img_path = src_path + "/s" + str(i) + "/" + str(j) + ".pgm"
             # print(img_path)
             img = cv2.imread(img_path, 0)
-            # cv2.imshow("1",img)
-            img_col = np.array(img).flatten()
 
+            img_col = np.array(img).flatten()
             img_list[:, count] = img_col[:]
             count += 1
     
@@ -61,11 +60,48 @@ def eigenfaces(src_path, a):
     eigenfaces_mat = np.matrix(img_list)*np.matrix(eigen_vectors)
     # normalized the matrix
     eigenfaces_mat = 255*(eigenfaces_mat - np.min(eigenfaces_mat)) / (np.max(eigenfaces_mat) - np.min(eigenfaces_mat))
+
+    # compute the weight of trainging data
+    eigenfaces_weight = np.matrix(img_list.T)*np.matrix(eigenfaces_mat)
+    # print(np.size(eigenfaces_weight))
     
-    return img_mean, eigenfaces_mat
+    return img_mean, eigenfaces_mat, eigenfaces_weight
+
+def eigenfaces_detect(src, average, eigenfaces, weight):
+    src_img = cv2.imread(src, 0)
+    img_col = np.array(src_img).flatten()
+
+    diff = img_col-average
+    src_weight = np.matrix(diff.T)*np.matrix(eigenfaces)
+
+    dis = []
+
+    for i in range(total_face):
+        distance = np.linalg.norm(weight[i]- src_weight)
+        dis.append(distance)
+    
+    # get the index of detected face
+    index = np.argsort(dis)
+    # print(index)
+
+    # get the path of the detected face
+    # get the subject dir
+    sub = (int)((index[0] + 1) / 5 + 1)
+    # print(sub)
+    # get the number of the face in a certain subject
+    number = (index[0] + 1) % 5
+    # print(number)
+    # merge the subject and number to the path
+    dist = "D:\\k\\Myeigen\\MyEigenface\\att_faces\\s" + str(sub) + "/" + str(number) + ".pgm"
+    dist_img = cv2.imread(dist, 0)
+
+    detect = np.empty((row, col*2), dtype=np.uint8)
+    detect[:, 0:col] = src_img
+    detect[:, col:col*2] = dist_img
+    cv2.imshow("detect", detect)
 
 # the second parameter is always between 0.95-0.99
-average, eigenfaces = eigenfaces("D:\\k\\Myeigen\\MyEigenface\\att_faces", 0.95)
+average, eigenfaces, weight = eigenfaces_train("D:\\k\\Myeigen\\MyEigenface\\att_faces", 0.95)
 
 # show the average face
 average_img = average.reshape(row, col).astype(np.uint8)
@@ -76,7 +112,9 @@ eigenfaces_img = np.empty((row, col*10), dtype=np.uint8)
 for i in range(10):
     eigenfaces_img_temp = eigenfaces.T[i].reshape(row, col)
      # cv2.imshow(str(i), eigenface_img_temp)
-    eigenfaces_img[:,col*i:col*(i+1)] = eigenfaces_img_temp
+    eigenfaces_img[:, col*i:col*(i+1)] = eigenfaces_img_temp
 cv2.imshow("eigenfaces",eigenfaces_img)
+
+eigenfaces_detect("D:\\k\\Myeigen\\MyEigenface\\att_faces\\s1\\6.pgm", average, eigenfaces, weight)
 
 cv2.waitKey(0)
