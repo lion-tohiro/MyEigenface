@@ -115,6 +115,7 @@ for i in range(10):
     eigenfaces_img[:, col*i:col*(i+1)] = eigenfaces_img_temp
 cv2.imshow("eigenfaces",eigenfaces_img)
 
+# do detection
 eigenfaces_detect("D:\\k\\Myeigen\\MyEigenface\\att_faces\\s1\\6.pgm", average, eigenfaces, weight)
 
 cv2.waitKey(0)
