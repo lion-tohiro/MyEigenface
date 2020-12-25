@@ -28,9 +28,6 @@ def eigenfaces(src_path, a):
     
     # compute the average of the faces
     img_mean = np.sum(img_list, axis=1) / total_face
-    # average = img_mean.reshape(row, col).astype(np.uint8)
-    # cv2.imshow("ave", average)
-    # cv2.waitKey(0)
 
     # compute the difference matrix
     for i in range(0, total_face):
@@ -62,16 +59,24 @@ def eigenfaces(src_path, a):
     eigen_vectors = eigen_vectors[:, 0:count_eigen_values]
 
     eigenfaces_mat = np.matrix(img_list)*np.matrix(eigen_vectors)
-
-    eigenface_img = np.empty((row, col*10), dtype=np.uint8)
-    for i in range(10):
-        eigenface_img_temp = eigenfaces_mat.T[i].reshape(row, col).astype(np.uint8)
-        # cv2.imshow(str(i), eigenface_img_temp)
-        eigenface_img[:,col*i:col*(i+1)] = eigenface_img_temp
-    cv2.imshow("eigenfaces",eigenface_img)
-    cv2.waitKey(0)
+    # normalized the matrix
+    eigenfaces_mat = 255*(eigenfaces_mat - np.min(eigenfaces_mat)) / (np.max(eigenfaces_mat) - np.min(eigenfaces_mat))
     
     return img_mean, eigenfaces_mat
 
 # the second parameter is always between 0.95-0.99
-eigenfaces("D:\\k\\Myeigen\\MyEigenface\\att_faces", 0.95)
+average, eigenfaces = eigenfaces("D:\\k\\Myeigen\\MyEigenface\\att_faces", 0.95)
+
+# show the average face
+average_img = average.reshape(row, col).astype(np.uint8)
+cv2.imshow("average-faces", average_img)
+
+# show the top 10 eigenfaces
+eigenfaces_img = np.empty((row, col*10), dtype=np.uint8)
+for i in range(10):
+    eigenfaces_img_temp = eigenfaces.T[i].reshape(row, col)
+     # cv2.imshow(str(i), eigenface_img_temp)
+    eigenfaces_img[:,col*i:col*(i+1)] = eigenfaces_img_temp
+cv2.imshow("eigenfaces",eigenfaces_img)
+
+cv2.waitKey(0)
