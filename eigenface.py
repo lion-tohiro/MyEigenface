@@ -2,7 +2,7 @@ from cv2 import cv2
 import numpy as np
 import sys
 import os
-from pre_produce import pre_process
+from pre_process import pre_process
 
 # some parameters of training and testing data
 train_sub_count = 40
