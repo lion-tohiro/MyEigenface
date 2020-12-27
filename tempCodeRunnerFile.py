@@ -1,5 +1,0 @@
-img = cv2.imread(base)
-point = SetPoints("src", img)
-point = np.array(point)
-eye_file = base.replace("pgm", "npy")
-np.save(eye_file, point)
