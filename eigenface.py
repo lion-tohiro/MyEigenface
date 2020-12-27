@@ -2,6 +2,7 @@ from cv2 import cv2
 import numpy as np
 import sys
 import os
+from pre_produce import pre_process
 
 # some parameters of training and testing data
 train_sub_count = 40
@@ -9,6 +10,7 @@ train_img_count = 5
 total_face = 200
 row = 112
 col = 92
+mask = [[25, 45], [66, 45]]
 
 def eigenfaces_train(src_path):
     img_list = np.empty((row*col, total_face))
@@ -18,8 +20,12 @@ def eigenfaces_train(src_path):
     for i in range(1, train_sub_count+1):
         for j in range(1, train_img_count+1):
             img_path = src_path + "/s" + str(i) + "/" + str(j) + ".pgm"
-            print(img_path)
+            npy_path = src_path + "/s" + str(i) + "/" + str(j) + ".npy"
+            # print(img_path)
             img = cv2.imread(img_path, 0)
+            point = np.load(npy_path)
+
+            img = pre_process(img, point, mask)
 
             img_col = np.array(img).flatten()
             img_list[:, count] = img_col[:]
@@ -66,7 +72,7 @@ def eigenfaces_train(src_path):
 
 average, values, vectors, weight = eigenfaces_train("D:\\k\\Myeigen\\MyEigenface\\att_faces")
 
-np.savez("D:\\k\\Myeigen\\MyEigenface\\model.npz", average=average, values=values, vectors=vectors, weight=weight)
+np.savez("D:\\k\\Myeigen\\MyEigenface\\model_1.npz", average=average, values=values, vectors=vectors, weight=weight)
 
 # show the average face
 average_img = average.reshape(row, col).astype(np.uint8)

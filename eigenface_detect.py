@@ -2,6 +2,7 @@ import os
 import sys
 from cv2 import cv2
 import numpy as np
+from pre_produce import pre_process
 
 # some parameters of training and testing data
 train_sub_count = 40
@@ -9,12 +10,15 @@ train_img_count = 5
 total_face = 200
 row = 112
 col = 92
+mask = [[25, 45], [66, 45]]
 
-model_path = "D:\\k\\Myeigen\\MyEigenface\\model.npz"
+model_path = "D:\\k\\Myeigen\\MyEigenface\\model_1.npz"
 
 def eigenfaces_detect(src, average, values, vectors, weight, a):
-    src_img = cv2.imread(src, 0)
-    img_col = np.array(src_img).flatten()
+    src_img = cv2.imread(src+".pgm", 0)
+    point = np.load(src+".npy")
+    src_img_update = pre_process(src_img, point, mask)
+    img_col = np.array(src_img_update).flatten()
 
     diff = img_col - average
 
@@ -30,7 +34,7 @@ def eigenfaces_detect(src, average, values, vectors, weight, a):
     # print(count_eigen_values)
     vectors = vectors[:, 0:count_eigen_values]
     weight = weight[0:count_eigen_values, :]
-    print(weight)
+    # print(weight)
 
     src_weight = np.matrix(vectors.T)*np.matrix(diff).T
     # print(src_weight)
@@ -68,6 +72,6 @@ values = data["values"]
 vectors = data["vectors"]
 weight = data["weight"]
 
-eigenfaces_detect("D:\\k\\Myeigen\\MyEigenface\\att_faces\\s2\\6.pgm", average, values, vectors, weight, 0.95)
+eigenfaces_detect("D:\\k\\Myeigen\\MyEigenface\\att_faces\\s6\\6", average, values, vectors, weight, 0.95)
 
 cv2.waitKey(0)
