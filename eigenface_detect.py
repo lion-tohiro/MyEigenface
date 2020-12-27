@@ -63,4 +63,4 @@ def eigenfaces_detect(src, average, values, vectors, weight, a):
     detect = np.empty((row_original, col_original*2), dtype=np.uint8)
     detect[:, 0:col_original] = original_img
     detect[:, col_original:col_original*2] = dist_img
-    cv2.imshow("detect", detect)
+    cv2.imshow("detection", detect)

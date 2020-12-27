@@ -27,6 +27,7 @@ def eigenfaces_restruct(src, average, values, vectors):
     src_restruct_10pcs = normalize(src_restruct_10pcs)
     result_10pcs = src_restruct_10pcs.T + average
     result_10pcs = normalize(result_10pcs)
+    result_10pcs = result_10pcs.reshape(row, col).astype(np.uint8)
 
     # 25PCs
     vectors_25pcs = vectors[:,0:25]
@@ -35,6 +36,7 @@ def eigenfaces_restruct(src, average, values, vectors):
     src_restruct_25pcs = normalize(src_restruct_25pcs)
     result_25pcs = src_restruct_25pcs.T + average
     result_25pcs = normalize(result_25pcs)
+    result_25pcs = result_25pcs.reshape(row, col).astype(np.uint8)
 
     # 50PCs
     vectors_50pcs = vectors[:,0:50]
@@ -43,6 +45,7 @@ def eigenfaces_restruct(src, average, values, vectors):
     src_restruct_50pcs = normalize(src_restruct_50pcs)
     result_50pcs = src_restruct_50pcs.T + average
     result_50pcs = normalize(result_50pcs)
+    result_50pcs = result_50pcs.reshape(row, col).astype(np.uint8)
 
     # 100PCs
     vectors_100pcs = vectors[:,0:100]
@@ -51,6 +54,7 @@ def eigenfaces_restruct(src, average, values, vectors):
     src_restruct_100pcs = normalize(src_restruct_100pcs)
     result_100pcs = src_restruct_100pcs.T + average
     result_100pcs = normalize(result_100pcs)
+    result_100pcs = result_100pcs.reshape(row, col).astype(np.uint8)
 
     # all
     src_weight = np.mat(vectors.T)*np.mat(diff).T
@@ -58,13 +62,18 @@ def eigenfaces_restruct(src, average, values, vectors):
     src_restruct = normalize(src_restruct)
     result = src_restruct.T + average
     result = normalize(result)
+    result = result.reshape(row, col).astype(np.uint8)
 
     result_img = np.empty((row, col*6), dtype=np.uint8)
     result_img[:, 0:col] = src_img
-    result_img[:, col:col*2] = re
-    cv2.imshow("eigenfaces",eigenfaces_img)
+    result_img[:, col:col*2] = result_10pcs
+    result_img[:, col*2:col*3] = result_25pcs
+    result_img[:, col*3:col*4] = result_50pcs
+    result_img[:, col*4:col*5] = result_100pcs
+    result_img[:, col*5:col*6] = result
+    cv2.imshow("resruction",result_img)
 
     # result = result_10pcs.reshape(row, col).astype(np.uint8)
     # print(result)
-    cv2.imshow("src", src_img)
-    cv2.imshow("result_10pcs", result)
+    # cv2.imshow("src", src_img)
+    # cv2.imshow("result_10pcs", result)

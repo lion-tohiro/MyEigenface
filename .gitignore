@@ -263,3 +263,4 @@ dmypy.json
 
 *.npz
 >>>>>>> Stashed changes
+model.npz

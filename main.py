@@ -7,7 +7,8 @@ from eigenface_detect import eigenfaces_detect
 from eigenface_restruct import eigenfaces_restruct
 from base import normalize
 
-train = True
+# train = True
+train = False
 
 # some parameters of training and testing data
 train_sub_count = 40
